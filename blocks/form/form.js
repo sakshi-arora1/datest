@@ -423,12 +423,20 @@ function decode(rawContent) {
 
 function extractFormDefinition(block) {
   let formDef;
-  const container = block.querySelector('pre');
-  const codeEl = container?.querySelector('code');
-  const content = codeEl?.textContent;
-  if (content) {
+  let container = block.querySelector('pre');
+  if (container) {
+    const codeEl = container?.querySelector('code');
+    const content = codeEl?.textContent;
+    if (content) {
+      formDef = decode(content);
+    }
+  } else {
+    container = block.querySelector('div div');
+    const codeEl = container?.querySelector('p');
+    const content = codeEl?.textContent;
     formDef = decode(content);
   }
+
   return { container, formDef };
 }
 
