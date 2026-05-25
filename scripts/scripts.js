@@ -164,7 +164,7 @@ function loadDelayed() {
   // load anything that can be postponed to the latest here
 }
 
-async function loadPage() {
+export async function loadPage() {
   await loadEager(document);
   await loadLazy(document);
   loadDelayed();
