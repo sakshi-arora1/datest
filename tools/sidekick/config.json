@@ -1,7 +1,7 @@
 {
   "project": "AEM XWalk Boilerplate",
   "editUrlLabel": "AEM Editor",
-  "editUrlPattern": "{{contentSourceUrl}}{{pathname}}?cmd=open",
+  "editUrlPattern": "https://da.live/canvas#/{{org}}/{{site}}{{pathname}}",
   "plugins": [
     {
       "id": "quick-edit",
