@@ -31,6 +31,10 @@ header nav[aria-expanded='true'] {
 }
 
 @media (width >= 900px) {
+  header .nav-wrapper {
+    position: relative;
+  }
+
   header nav {
     display: flex;
     justify-content: space-between;
@@ -138,15 +142,15 @@ header nav[aria-expanded='true'] .nav-hamburger-icon::after {
 /* brand */
 header .nav-brand {
   grid-area: brand;
-  flex-basis: 50%;
+  flex-basis: 128px;
   font-size: var(--heading-font-size-s);
   font-weight: 700;
   line-height: 1;
 }
 
 header nav .nav-brand img {
-  width: auto;
-  height: 36px;
+  width: 128px;
+  height: auto;
 }
 
 /* sections */
