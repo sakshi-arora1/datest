@@ -48,12 +48,22 @@ function appendOptions(select, options, placeholder) {
 
 function getPageContext(sdk) {
   const context = sdk.context || sdk.detail || {};
-  const mountpoint = context.config?.mountpoint || sdk.detail?.config?.mountpoint;
-  const mountpointParts = mountpoint ? new URL(mountpoint).pathname.split('/').filter(Boolean) : [];
+  const detail = sdk.detail || {};
+  const mountpoint = context.config?.mountpoint || detail.config?.mountpoint;
+  const mountpointParts = mountpoint
+    ? new URL(mountpoint, window.location.origin).pathname.split('/').filter(Boolean)
+    : [];
+  const appPath = window.location.pathname.split('/').filter(Boolean);
+  const appIndex = appPath.indexOf('app');
+  const appOrg = appIndex >= 0 ? appPath[appIndex + 1] : '';
+  const appSite = appIndex >= 0 ? appPath[appIndex + 2] : '';
+  const params = new URLSearchParams(window.location.search);
 
   return {
-    org: context.org || context.organization || sdk.org || mountpointParts[0] || '',
-    site: context.site || context.repo || context.repository || sdk.site || sdk.repo || mountpointParts[1] || '',
+    org: context.org || context.organization || sdk.org || detail.org
+      || mountpointParts[0] || appOrg || params.get('org') || '',
+    site: context.site || context.repo || context.repository || sdk.site || sdk.repo || detail.site
+      || mountpointParts[1] || appSite || params.get('site') || '',
   };
 }
 
