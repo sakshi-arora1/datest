@@ -56,6 +56,13 @@ function appendOptions(select, options, placeholder) {
   const formUrl = document.getElementById('form-url');
   let selectedFormURL = '';
 
+  function updateSelectedForm() {
+    const selectedPath = formSelect.value;
+    selectedFormURL = selectedPath ? getSitePreviewUrl(site, org, selectedPath) : '';
+    formUrl.textContent = selectedFormURL;
+    insertButton.disabled = !selectedFormURL;
+  }
+
   async function loadSelectedFolder() {
     formSelect.disabled = true;
     insertButton.disabled = true;
@@ -75,7 +82,13 @@ function appendOptions(select, options, placeholder) {
         forms.length ? 'Select a file' : 'No files in this folder',
       );
       formSelect.disabled = forms.length === 0;
-      setStatus(forms.length ? '' : 'This folder does not contain any files.');
+      if (forms.length) {
+        formSelect.value = forms[0].path;
+        updateSelectedForm();
+        setStatus('');
+      } else {
+        setStatus('This folder does not contain any files.');
+      }
     } catch (error) {
       appendOptions(formSelect, [], 'Unable to load forms');
       setStatus(error.message || 'Unable to load forms.', 'error');
@@ -115,12 +128,7 @@ function appendOptions(select, options, placeholder) {
   }
 
   folderSelect.addEventListener('change', loadSelectedFolder);
-  formSelect.addEventListener('change', () => {
-    const selectedPath = formSelect.value;
-    selectedFormURL = selectedPath ? getSitePreviewUrl(site, org, selectedPath) : '';
-    formUrl.textContent = selectedFormURL;
-    insertButton.disabled = !selectedFormURL;
-  });
+  formSelect.addEventListener('change', updateSelectedForm);
 
   insertButton.addEventListener('click', async () => {
     if (!selectedFormURL) {

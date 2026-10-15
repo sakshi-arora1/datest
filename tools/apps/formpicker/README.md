@@ -7,7 +7,8 @@ A DA library extension for selecting a file from a site's
 
 1. Open **Form Picker** from the DA page editor's app/library menu. It reads the
    organization and site from the current page context and loads the site's folders.
-2. Choose a folder and a non-HTML file. The inserted form URL always ends in
+2. Choose a folder and a non-HTML file. The first file is selected automatically
+   when a folder loads. The inserted form URL always ends in
    `.json`, regardless of the selected file's extension.
 3. Click **Insert Form Block**.
 
