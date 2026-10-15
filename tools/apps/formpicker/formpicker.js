@@ -86,6 +86,29 @@ function getPageContext(sdk) {
     insertButton.disabled = !selectedFormURL;
   }
 
+  function showForms(forms) {
+    appendOptions(
+      formSelect,
+      forms.map((form) => ({ label: form.name.replace(/\.html$/i, ''), value: form.path })),
+      forms.length ? 'Select a file' : 'No files in this folder',
+    );
+    formSelect.disabled = forms.length === 0;
+    if (forms.length) {
+      formSelect.value = forms[0].path;
+      updateSelectedForm();
+      setStatus('');
+    } else {
+      setStatus('This folder does not contain any files.');
+    }
+  }
+
+  async function findFirstFolderWithForms(folders, index = 0) {
+    if (index >= folders.length) return null;
+    const forms = await listForms(org, site, folders[index].path);
+    if (forms.length) return { folder: folders[index], forms };
+    return findFirstFolderWithForms(folders, index + 1);
+  }
+
   async function loadSelectedFolder() {
     formSelect.disabled = true;
     insertButton.disabled = true;
@@ -99,19 +122,7 @@ function getPageContext(sdk) {
     formSelect.replaceChildren(new Option('Loading forms…', ''));
     try {
       const forms = await listForms(org, site, folderPath);
-      appendOptions(
-        formSelect,
-        forms.map((form) => ({ label: form.name, value: form.path })),
-        forms.length ? 'Select a file' : 'No files in this folder',
-      );
-      formSelect.disabled = forms.length === 0;
-      if (forms.length) {
-        formSelect.value = forms[0].path;
-        updateSelectedForm();
-        setStatus('');
-      } else {
-        setStatus('This folder does not contain any files.');
-      }
+      showForms(forms);
     } catch (error) {
       appendOptions(formSelect, [], 'Unable to load forms');
       setStatus(error.message || 'Unable to load forms.', 'error');
@@ -138,8 +149,14 @@ function getPageContext(sdk) {
       folderSelect.disabled = folders.length === 0;
       appendOptions(formSelect, [], 'Select a folder first');
       if (folders.length) {
-        folderSelect.value = folders[0].path;
-        await loadSelectedFolder();
+        const selection = await findFirstFolderWithForms(folders);
+        if (selection) {
+          folderSelect.value = selection.folder.path;
+          showForms(selection.forms);
+        } else {
+          folderSelect.value = folders[0].path;
+          showForms([]);
+        }
       } else {
         setStatus('No forms folder found for this site.');
       }

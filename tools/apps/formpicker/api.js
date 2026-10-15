@@ -28,9 +28,7 @@ export async function listFormFolders(org, site, path = '/forms/') {
 export async function listForms(org, site, path) {
   const items = await listItems(org, site, path);
   return items
-    // TOFIX: Only JSON files should appear in the form dropdown.
-    .filter((item) => typeof item.ext === 'string'
-      && item.ext.replace(/^\./, '').toLowerCase() !== 'html')
+    .filter((item) => typeof item.ext === 'string')
     .map((item) => {
       const extension = item.ext.startsWith('.') ? item.ext : `.${item.ext}`;
       const filename = `${item.name}${extension}`;
