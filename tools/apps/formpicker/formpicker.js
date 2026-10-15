@@ -15,7 +15,10 @@ function escapeHtml(value) {
 }
 
 function getSitePreviewUrl(site, org, path) {
-  const segments = path.split('/').filter(Boolean).map(encodeURIComponent);
+  const pathSegments = path.split('/').filter(Boolean);
+  const filename = pathSegments.pop();
+  pathSegments.push(`${filename.replace(/\.[^.]*$/, '')}.json`);
+  const segments = pathSegments.map(encodeURIComponent);
   return `https://main--${site.toLowerCase()}--${org.toLowerCase()}.aem.page/${segments.join('/')}`;
 }
 
@@ -98,7 +101,12 @@ function appendOptions(select, options, placeholder) {
       );
       folderSelect.disabled = folders.length === 0;
       appendOptions(formSelect, [], 'Select a folder first');
-      setStatus(folders.length ? 'Choose a folder to view its forms.' : 'No forms folder found for this site.');
+      if (folders.length) {
+        folderSelect.value = folders[0].path;
+        await loadSelectedFolder();
+      } else {
+        setStatus('No forms folder found for this site.');
+      }
     } catch (error) {
       appendOptions(folderSelect, [], 'Unable to load folders');
       appendOptions(formSelect, [], 'Select a folder first');
