@@ -29,6 +29,13 @@ h1 {
   line-height: 1.5;
 }
 
+.page-context {
+  margin: -10px 0 20px;
+  color: #656565;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
 label {
   display: block;
   margin: 14px 0 6px;

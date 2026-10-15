@@ -75,7 +75,9 @@ function getPageContext(sdk) {
   const formSelect = document.getElementById('form-select');
   const insertButton = document.getElementById('insert-button');
   const formUrl = document.getElementById('form-url');
+  const pageContext = document.getElementById('page-context');
   let selectedFormURL = '';
+  pageContext.textContent = `Organization: ${org || 'Unavailable'} · Site: ${site || 'Unavailable'}`;
 
   function updateSelectedForm() {
     const selectedPath = formSelect.value;
