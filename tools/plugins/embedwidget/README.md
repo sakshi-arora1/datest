@@ -47,3 +47,7 @@ Replace org/repo as needed:
 | title | path | format | icon | experience | ref |
 | --- | --- | --- | --- | --- | --- |
 | EmbedWidget (local) | http://localhost:3000/tools/plugins/embedwidget/embedwidget.html | local | | | |
+
+The generated `tradingview` block is rendered by
+[`blocks/tradingview`](../../../blocks/tradingview/README.md); both legacy
+embed scripts and custom-element module widgets are supported.
