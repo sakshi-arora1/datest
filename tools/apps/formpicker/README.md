@@ -1,7 +1,8 @@
 # Form Picker
 
-A DA library extension for selecting a file from a site's
-`forms/` folder and inserting a `form` block into the current document.
+A DA library extension for selecting a file from a site's folders and inserting
+a `form` block into the current document. It prefers the `forms/` folder when
+available.
 
 ## How to Use
 

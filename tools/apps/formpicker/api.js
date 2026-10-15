@@ -13,7 +13,7 @@ async function listItems(org, site, path) {
   return items;
 }
 
-export async function listFormFolders(org, site, path = '/forms/') {
+export async function listFormFolders(org, site, path = '/') {
   const items = await listItems(org, site, path);
   const childFolders = items.filter((item) => !item.ext);
   const nestedFolders = await Promise.all(

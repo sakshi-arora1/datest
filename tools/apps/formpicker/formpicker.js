@@ -149,7 +149,11 @@ function getPageContext(sdk) {
       folderSelect.disabled = folders.length === 0;
       appendOptions(formSelect, [], 'Select a folder first');
       if (folders.length) {
-        const selection = await findFirstFolderWithForms(folders);
+        const defaultFolder = folders.find((folder) => folder.path === '/forms/');
+        const folderCandidates = defaultFolder
+          ? [defaultFolder, ...folders.filter((folder) => folder !== defaultFolder)]
+          : folders;
+        const selection = await findFirstFolderWithForms(folderCandidates);
         if (selection) {
           folderSelect.value = selection.folder.path;
           showForms(selection.forms);
