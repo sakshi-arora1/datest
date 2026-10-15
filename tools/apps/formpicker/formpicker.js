@@ -45,20 +45,13 @@ function appendOptions(select, options, placeholder) {
 
 (async function init() {
   const { context = {}, actions } = await DA_SDK;
-  const params = new URLSearchParams(window.location.search);
-  const orgInput = document.getElementById('org-input');
-  const siteInput = document.getElementById('site-input');
-  const contextForm = document.getElementById('context-form');
-  const loadButton = document.getElementById('load-button');
+  const org = context.org || context.organization || '';
+  const site = context.site || context.repo || context.repository || '';
   const folderSelect = document.getElementById('folder-select');
   const formSelect = document.getElementById('form-select');
   const insertButton = document.getElementById('insert-button');
   const formUrl = document.getElementById('form-url');
-  let folders = [];
   let selectedFormURL = '';
-
-  orgInput.value = context.org || context.organization || params.get('org') || '';
-  siteInput.value = context.site || context.repo || context.repository || params.get('site') || '';
 
   async function loadSelectedFolder() {
     formSelect.disabled = true;
@@ -72,35 +65,32 @@ function appendOptions(select, options, placeholder) {
     }
     formSelect.replaceChildren(new Option('Loading forms…', ''));
     try {
-      const forms = await listForms(orgInput.value.trim(), siteInput.value.trim(), folderPath);
+      const forms = await listForms(org, site, folderPath);
       appendOptions(
         formSelect,
         forms.map((form) => ({ label: form.name, value: form.path })),
-        forms.length ? 'Select a form' : 'No JSON forms in this folder',
+        forms.length ? 'Select a file' : 'No files in this folder',
       );
       formSelect.disabled = forms.length === 0;
-      setStatus(forms.length ? '' : 'This folder does not contain any JSON forms.');
+      setStatus(forms.length ? '' : 'This folder does not contain any files.');
     } catch (error) {
       appendOptions(formSelect, [], 'Unable to load forms');
       setStatus(error.message || 'Unable to load forms.', 'error');
     }
   }
 
-  contextForm.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    const org = orgInput.value.trim();
-    const site = siteInput.value.trim();
+  async function loadFolders() {
     if (!org || !site) {
-      setStatus('Enter both an organization and a site.', 'error');
+      appendOptions(folderSelect, [], 'Page context unavailable');
+      setStatus('Unable to determine the organization and site from the page context.', 'error');
       return;
     }
-    loadButton.disabled = true;
     folderSelect.disabled = true;
     formSelect.disabled = true;
     insertButton.disabled = true;
     setStatus('Loading folders…');
     try {
-      folders = await listFormFolders(org, site);
+      const folders = await listFormFolders(org, site);
       appendOptions(
         folderSelect,
         folders.map((folder) => ({ label: folder.label, value: folder.path })),
@@ -113,16 +103,12 @@ function appendOptions(select, options, placeholder) {
       appendOptions(folderSelect, [], 'Unable to load folders');
       appendOptions(formSelect, [], 'Select a folder first');
       setStatus(error.message || 'Unable to load folders.', 'error');
-    } finally {
-      loadButton.disabled = false;
     }
-  });
+  }
 
   folderSelect.addEventListener('change', loadSelectedFolder);
   formSelect.addEventListener('change', () => {
     const selectedPath = formSelect.value;
-    const org = orgInput.value.trim();
-    const site = siteInput.value.trim();
     selectedFormURL = selectedPath ? getSitePreviewUrl(site, org, selectedPath) : '';
     formUrl.textContent = selectedFormURL;
     insertButton.disabled = !selectedFormURL;
@@ -145,9 +131,5 @@ function appendOptions(select, options, placeholder) {
     }
   });
 
-  if (orgInput.value && siteInput.value) {
-    contextForm.requestSubmit();
-  } else {
-    setStatus('Enter the organization and site to browse forms.');
-  }
+  await loadFolders();
 }());
