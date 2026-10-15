@@ -46,10 +46,21 @@ function appendOptions(select, options, placeholder) {
   options.forEach(({ label, value }) => select.add(new Option(label, value)));
 }
 
+function getPageContext(sdk) {
+  const context = sdk.context || sdk.detail || {};
+  const mountpoint = context.config?.mountpoint || sdk.detail?.config?.mountpoint;
+  const mountpointParts = mountpoint ? new URL(mountpoint).pathname.split('/').filter(Boolean) : [];
+
+  return {
+    org: context.org || context.organization || sdk.org || mountpointParts[0] || '',
+    site: context.site || context.repo || context.repository || sdk.site || sdk.repo || mountpointParts[1] || '',
+  };
+}
+
 (async function init() {
-  const { context = {}, actions } = await DA_SDK;
-  const org = context.org || context.organization || '';
-  const site = context.site || context.repo || context.repository || '';
+  const sdk = await DA_SDK;
+  const { actions } = sdk;
+  const { org, site } = getPageContext(sdk);
   const folderSelect = document.getElementById('folder-select');
   const formSelect = document.getElementById('form-select');
   const insertButton = document.getElementById('insert-button');
