@@ -29,9 +29,10 @@ Omit `&site={site}` to open without a site selected.
 | `org` | No | Organization to load automatically. Without it, enter an organization and click Load. |
 | `site` | No | Initial site selection; only used when `org` is supplied. |
 
-The app updates these parameters as you navigate, so the current view can be
-bookmarked or shared. It uses the URL parameters rather than the SDK's
-org/site context to choose the initial location.
+The app uses the `org` and `site` query parameters when present; otherwise it
+uses the organization and site in the `/app/{org}/{site}/` path. It updates
+these query parameters as you navigate, so the current view can be bookmarked
+or shared. The SDK's org/site context is not used to choose the initial location.
 
 ## Files
 

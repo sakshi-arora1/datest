@@ -119,8 +119,12 @@ class FormManagerApp extends LitElement {
     document.addEventListener('mousedown', this._handleDocMousedown);
 
     const urlParams = new URLSearchParams(window.location.search);
-    const org = (urlParams.get('org') || '').trim();
-    const site = (urlParams.get('site') || '').trim() || null;
+    const pathParts = window.location.pathname.split('/').filter(Boolean);
+    const appIndex = pathParts.indexOf('app');
+    const pathOrg = appIndex >= 0 ? decodeURIComponent(pathParts[appIndex + 1] || '') : '';
+    const pathSite = appIndex >= 0 ? decodeURIComponent(pathParts[appIndex + 2] || '') : '';
+    const org = (urlParams.get('org') || pathOrg).trim();
+    const site = ((urlParams.get('site') || pathSite).trim()) || null;
     if (org) {
       this._orgValue = org;
       this._state = 'loading';
