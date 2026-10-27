@@ -613,6 +613,11 @@ customElements.define('formmanager-app', FormManagerApp);
 
 (async function init() {
   const { context, token } = await DA_SDK;
+  if (document.readyState === 'loading') {
+    await new Promise((resolve) => {
+      document.addEventListener('DOMContentLoaded', resolve, { once: true });
+    });
+  }
   const cmp = document.createElement('formmanager-app');
   cmp.context = context;
   cmp.token = token;
